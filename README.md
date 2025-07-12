@@ -1,4 +1,4 @@
-<h1> ft_minitalk 🧠💬 <\h1>
+<h1> ft_minitalk 🧠💬 </h1>
 
 A UNIX signal-based communication system between two independent processes: client and server. This project was developed for the 42 curriculum, under the constraint of using only SIGUSR1 and SIGUSR2 as the protocol for data transmission.
 
