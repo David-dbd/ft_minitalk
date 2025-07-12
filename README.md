@@ -14,7 +14,7 @@ The entire communication mechanism relies exclusively on SIGUSR1 and SIGUSR2, me
 
 <h2>💡 How It Works</h2>
 
-<strong>Server:</strong>
+<strong><u>Server:</u></strong>
 Launched without arguments.
 
 Displays its PID (Process Identifier) on startup.
@@ -27,7 +27,7 @@ Displays the received message in real time.
 
 Sends a confirmation signal (SIGUSR1) to the client after processing each character.
 
-<strong>Client:</strong>
+<strong><u>Client:</u></strong>
 Launched with the server’s PID and a message string.
 
 Converts each character into binary (8 bits).
