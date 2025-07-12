@@ -6,7 +6,7 @@ A UNIX signal-based communication system between two independent processes: clie
 
 The goal of ft_minitalk is to create two programs:
 
-server: Awaits messages and displays them.
+<strong>server:</strong> Awaits messages and displays them.
 
 client: Sends a user-defined message to the server using only signals.
 
