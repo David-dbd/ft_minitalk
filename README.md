@@ -2,7 +2,7 @@
 
 A UNIX signal-based communication system between two independent processes: client and server. This project was developed for the 42 curriculum, under the constraint of using only SIGUSR1 and SIGUSR2 as the protocol for data transmission.
 
-*📦 Project Overview*
+<h3>📦 Project Overview </h3>
 
 The goal of ft_minitalk is to create two programs:
 
@@ -12,7 +12,7 @@ client: Sends a user-defined message to the server using only signals.
 
 The entire communication mechanism relies exclusively on SIGUSR1 and SIGUSR2, meaning you must creatively build your own protocol from scratch.
 
-*💡 How It Works*
+<h3>💡 How It Works</h3>
 
 Server:
 Launched without arguments.
@@ -38,7 +38,7 @@ Waits for confirmation after each character to continue.
 
 Terminates communication by sending an EOT (End Of Transmission) signal.
 
-*📚 Theory Context*
+<h3>📚 Theory Context </h3>
 
 What are signals?
 In UNIX systems, a signal is a way for processes to send notifications or interrupts to each other. Each signal has a numeric code and can be intercepted and handled via a signal handler. For this project:
@@ -52,7 +52,7 @@ SIGUSR2 → treated as 0
 Signal Handlers
 Using sigaction() in the server, signals are caught and processed bit-by-bit. Once 8 bits are collected, they're decoded and printed as characters.
 
-*🧠 Project Logic*
+<h3>🧠 Project Logic </h3>
 
 Initially, I had little experience with bitwise operations. So instead of using masking or shifting techniques, I implemented a buffer-based system that collects each signal as a raw value.
 
@@ -72,7 +72,7 @@ Client waits for this confirmation before sending the next character.
 
 To avoid timing issues and loss of data, the client uses usleep(50) between bits — but thanks to server confirmations, delays are minimized.
 
-*🔍 Input Validation*
+<h3>🔍 Input Validation </h3>
 
 Server receives no arguments.
 
@@ -88,7 +88,7 @@ Proper length (within expected range).
 
 Strict numeric characters — if it contains letters or is malformed, it’s treated as an error.
 
-*✨ Highlights & Reflections*
+<h3>✨ Highlights & Reflections </h3>
 
 At the time, I didn’t fully understand bitwise operations — and that limitation became a challenge I embraced. Designing my own buffer-based method pushed me to think creatively and logically under constraints. The result is a clean, responsive system with minimal delay and clear signal flow — fully functional with just usleep(50) between bits.
 
