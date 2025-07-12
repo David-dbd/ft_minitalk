@@ -14,7 +14,7 @@ The entire communication mechanism relies exclusively on SIGUSR1 and SIGUSR2, me
 
 <h2>💡 How It Works</h2>
 
-<strong><u>Server:</u></strong>
+<u><strong>Server:</strong></u>
 Launched without arguments.
 
 Displays its PID (Process Identifier) on startup.
