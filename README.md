@@ -8,13 +8,13 @@ The goal of ft_minitalk is to create two programs:
 
 <strong>server:</strong> Awaits messages and displays them.
 
-client: Sends a user-defined message to the server using only signals.
+<strong>client:</strong> Sends a user-defined message to the server using only signals.
 
 The entire communication mechanism relies exclusively on SIGUSR1 and SIGUSR2, meaning you must creatively build your own protocol from scratch.
 
 <h2>💡 How It Works</h2>
 
-Server:
+<strong>Server:</strong>
 Launched without arguments.
 
 Displays its PID (Process Identifier) on startup.
@@ -27,7 +27,7 @@ Displays the received message in real time.
 
 Sends a confirmation signal (SIGUSR1) to the client after processing each character.
 
-Client:
+<strong>Client:</strong>
 Launched with the server’s PID and a message string.
 
 Converts each character into binary (8 bits).
@@ -43,9 +43,9 @@ Terminates communication by sending an EOT (End Of Transmission) signal.
 What are signals?
 In UNIX systems, a signal is a way for processes to send notifications or interrupts to each other. Each signal has a numeric code and can be intercepted and handled via a signal handler. For this project:
 
-SIGUSR1 → treated as 1
+<em>SIGUSR1 → treated as 1</em>
 
-SIGUSR2 → treated as 0
+<em>SIGUSR2 → treated as 0</em>
 
 💡 Since signals are asynchronous, the moment one is received, it interrupts the flow of the program, jumping to the signal handler immediately — even if you're in the middle of another function.
 
@@ -92,16 +92,16 @@ Strict numeric characters — if it contains letters or is malformed, it’s tre
 
 At the time, I didn’t fully understand bitwise operations — and that limitation became a challenge I embraced. Designing my own buffer-based method pushed me to think creatively and logically under constraints. The result is a clean, responsive system with minimal delay and clear signal flow — fully functional with just usleep(50) between bits.
 
-*🚀 Build & Run*
+<h3>🚀 Build & Run</h3>
 
 bash
-# Compile
+<em>Compile</em>
 make
 
-# Run server in one terminal
+<em>Run server in one terminal</em>
 ./server
 
-# Run client in another
+<em>Run client in another</em>
 ./client <server_pid> "Your custom message"
 🧪 Example
 bash
@@ -110,7 +110,8 @@ PID: 12345
 
 $ ./client 12345 "Hello from client!"
 Server displays: Hello from client!
-🛠️ Bonus Features
+
+<h3>🛠️ Bonus Features</h3>
 Custom signal protocol using confirmation signals.
 
 sigaction() for robust signal handling.
