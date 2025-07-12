@@ -12,6 +12,20 @@ The goal of ft_minitalk is to create two programs:
 
 The entire communication mechanism relies exclusively on SIGUSR1 and SIGUSR2, meaning you must creatively build your own protocol from scratch.
 
+<h2>📚 Theory Context </h2>
+
+What are signals?
+In UNIX systems, a signal is a way for processes to send notifications or interrupts to each other. Each signal has a numeric code and can be intercepted and handled via a signal handler. For this project:
+
+<em>SIGUSR1 → treated as 1</em>
+
+<em>SIGUSR2 → treated as 0</em>
+
+💡 Since signals are asynchronous, the moment one is received, it interrupts the flow of the program, jumping to the signal handler immediately — even if you're in the middle of another function.
+
+Signal Handlers
+Using sigaction() in the server, signals are caught and processed bit-by-bit. Once 8 bits are collected, they're decoded and printed as characters.
+
 <h2>💡 How It Works</h2>
 
 <u><strong>Server:</strong></u>
@@ -37,20 +51,6 @@ Sends one signal per bit (SIGUSR1 for 1, SIGUSR2 for 0).
 Waits for confirmation after each character to continue.
 
 Terminates communication by sending an EOT (End Of Transmission) signal.
-
-<h2>📚 Theory Context </h2>
-
-What are signals?
-In UNIX systems, a signal is a way for processes to send notifications or interrupts to each other. Each signal has a numeric code and can be intercepted and handled via a signal handler. For this project:
-
-<em>SIGUSR1 → treated as 1</em>
-
-<em>SIGUSR2 → treated as 0</em>
-
-💡 Since signals are asynchronous, the moment one is received, it interrupts the flow of the program, jumping to the signal handler immediately — even if you're in the middle of another function.
-
-Signal Handlers
-Using sigaction() in the server, signals are caught and processed bit-by-bit. Once 8 bits are collected, they're decoded and printed as characters.
 
 <h2>🧠 Project Logic </h2>
 
