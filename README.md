@@ -27,7 +27,7 @@ Displays the received message in real time.
 
 Sends a confirmation signal (SIGUSR1) to the client after processing each character.
 
-<strong><u>Client:</u></strong>
+<u><strong>Client:</strong></u>
 Launched with the server’s PID and a message string.
 
 Converts each character into binary (8 bits).
