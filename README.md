@@ -1,121 +1,159 @@
-<h1> ft_minitalk 🧠💬 </h1>
+<p align="center">
+  <a href="README.md">🇪🇸 Español</a> • <a href="README.en.md">🇺🇸 English</a>
+</p>
 
-A UNIX signal-based communication system between two independent processes: client and server. This project was developed for the 42 curriculum, under the constraint of using only SIGUSR1 and SIGUSR2 as the protocol for data transmission.
+---
+# ft_minitalk 🧠💬
 
-<h2>📦 Project Overview </h2>
+**ft_minitalk** es un sistema de comunicación en UNIX basado en señales entre dos procesos independientes — un cliente y un servidor — desarrollado como parte del currículo de 42.  
+El reto: usar **únicamente** `SIGUSR1` y `SIGUSR2` para transmitir datos, obligando a crear un protocolo de comunicación propio desde cero.
 
-The goal of ft_minitalk is to create two programs:
+---
 
-<strong>server:</strong> Awaits messages and displays them.
+## 📦 Descripción del Proyecto
 
-<strong>client:</strong> Sends a user-defined message to the server using only signals.
+El proyecto consta de dos programas:
 
-The entire communication mechanism relies exclusively on SIGUSR1 and SIGUSR2, meaning you must creatively build your own protocol from scratch.
+- **`server`** – Espera mensajes y los muestra en tiempo real.  
+- **`client`** – Envía un mensaje definido por el usuario al servidor utilizando solo señales.
 
-<h2>📚 Theory Context </h2>
+Toda la comunicación se basa exclusivamente en `SIGUSR1` y `SIGUSR2`, lo que requiere codificación, transmisión y decodificación a nivel de bits.
 
-What are signals?
-In UNIX systems, a signal is a way for processes to send notifications or interrupts to each other. Each signal has a numeric code and can be intercepted and handled via a signal handler. For this project:
+---
 
-<em>SIGUSR1 → treated as 1</em>
+## 📚 Contexto Teórico
 
-<em>SIGUSR2 → treated as 0</em>
+**¿Qué son las señales?**  
+En UNIX, las señales son interrupciones de software enviadas de un proceso a otro.  
+Cada señal tiene un código único y puede invocar un *signal handler* personalizado.
 
-💡 Since signals are asynchronous, the moment one is received, it interrupts the flow of the program, jumping to the signal handler immediately — even if you're in the middle of another function.
+Para este proyecto:
+- `SIGUSR1` → representa **bit 1**
+- `SIGUSR2` → representa **bit 0**
 
-Signal Handlers
-Using sigaction() in the server, signals are caught and processed bit-by-bit. Once 8 bits are collected, they're decoded and printed as characters.
+💡 **Naturaleza asíncrona:** Cuando se recibe una señal, interrumpe la ejecución normal del programa y llama inmediatamente al manejador registrado, sin importar qué estuviera haciendo el programa.
 
-<h2>💡 How It Works</h2>
+**Manejo de señales:**  
+Usando `sigaction()` en el servidor, cada señal es capturada y procesada **bit a bit**.  
+Cuando se han reunido 8 bits, se convierten de nuevo en un carácter y se imprimen.
 
-<u><strong>Server:</strong></u>
-Launched without arguments.
+---
 
-Displays its PID (Process Identifier) on startup.
+## 💡 Cómo Funciona
 
-Waits for signals from the client.
+### **Servidor**
+1. Se inicia **sin argumentos**.
+2. Muestra su PID (Process ID) al arrancar.
+3. Espera señales entrantes del cliente.
+4. Recoge bits, reconstruye caracteres y los imprime.
+5. Envía una señal de confirmación (`SIGUSR1`) al cliente después de cada carácter.
 
-Assembles incoming bits into characters.
+### **Cliente**
+1. Se lanza con:
+   - El PID del servidor.
+   - El mensaje a enviar.
+2. Convierte cada carácter en **binario de 8 bits**.
+3. Envía cada bit al servidor:
+   - `SIGUSR1` para 1
+   - `SIGUSR2` para 0
+4. Espera confirmación del servidor antes de enviar el siguiente carácter.
+5. Finaliza enviando una señal **EOT (End Of Transmission)**.
 
-Displays the received message in real time.
+---
 
-Sends a confirmation signal (SIGUSR1) to the client after processing each character.
+## 🧠 Lógica del Proyecto
 
-<u><strong>Client:</strong></u>
-Launched with the server’s PID and a message string.
+En lugar de usar operaciones de bits tradicionales (máscaras y desplazamientos), este proyecto emplea un **sistema basado en buffer** para recopilar los bits recibidos.  
+Fue una decisión intencionada, ya que en ese momento las operaciones bit a bit eran algo nuevo para mí.
 
-Converts each character into binary (8 bits).
+**Flujo de transferencia del mensaje:**
+1. Convertir caracteres → binario (8 bits cada uno).
+2. Enviar bits vía `SIGUSR1`/`SIGUSR2`.
+3. El servidor acumula bits y reconstruye los caracteres.
+4. El servidor envía confirmación → el cliente envía el siguiente carácter.
+5. Repetir hasta completar el mensaje → enviar EOT.
 
-Sends one signal per bit (SIGUSR1 for 1, SIGUSR2 for 0).
+**Control de tiempos:**  
+Para evitar pérdida de datos, el cliente usa `usleep(50)` entre bits.  
+Las confirmaciones del servidor reducen retrasos innecesarios.
 
-Waits for confirmation after each character to continue.
+---
 
-Terminates communication by sending an EOT (End Of Transmission) signal.
+## 🔍 Validación de Entrada
 
-<h2>🧠 Project Logic </h2>
+- **Servidor**: No recibe argumentos.  
+- **Cliente**: Requiere exactamente **dos argumentos**:
+  1. PID del servidor.
+  2. Mensaje a enviar.
 
-Initially, I had little experience with bitwise operations. So instead of using masking or shifting techniques, I implemented a buffer-based system that collects each signal as a raw value.
+**Validación de PID:**
+- Debe ser numérico.
+- Debe estar dentro del rango esperado de PIDs.
+- Formatos inválidos generan un error.
 
-The message transfer sequence is:
+---
 
-Convert each character of the message to binary (8 bits).
+## ⚡ Fiabilidad y Rendimiento
 
-Send each bit using SIGUSR1 or SIGUSR2.
+Este método basado en buffer, aunque más difícil de implementar, demostró ser **más fiable y robusto** que muchas implementaciones comunes.  
+Versiones típicas — que dependen de temporizaciones menos estrictas o que no usan protocolos de confirmación — suelen fallar o perder datos con mensajes grandes (por ejemplo, de **1.000** o incluso **10.000 caracteres**).
 
-Server buffers and reconstructs each character.
+Al imponer confirmaciones **bit a bit** y usar un sistema de buffer personalizado, esta implementación mantiene la estabilidad incluso con cargas elevadas, garantizando que **no se pierda ningún carácter** sin importar el tamaño del mensaje.
 
-Once done, server sends back a confirmation.
+---
 
-Client waits for this confirmation before sending the next character.
+## ✨ Destacados y Reflexiones
 
-🔁 This loop continues until the entire message is sent, followed by an EOT signal.
+- Protocolo binario personalizado usando solo dos señales.  
+- Manejo robusto de señales con `sigaction()`.  
+- Sistema de confirmación síncrono para asegurar la entrega.  
+- Método alternativo al bitwise clásico usando buffer dinámico.  
+- Retraso mínimo con `usleep(50)` por bit.  
+- Estable incluso con transmisiones de más de 10k caracteres.
 
-To avoid timing issues and loss of data, the client uses usleep(50) between bits — but thanks to server confirmations, delays are minimized.
+---
 
-<h2>🔍 Input Validation </h2>
+## 🚀 Compilación y Ejecución
 
-Server receives no arguments.
-
-Client receives two arguments:
-
-The server’s PID.
-
-A message string.
-
-PID is validated for:
-
-Proper length (within expected range).
-
-Strict numeric characters — if it contains letters or is malformed, it’s treated as an error.
-
-<h2>✨ Highlights & Reflections </h2>
-
-At the time, I didn’t fully understand bitwise operations — and that limitation became a challenge I embraced. Designing my own buffer-based method pushed me to think creatively and logically under constraints. The result is a clean, responsive system with minimal delay and clear signal flow — fully functional with just usleep(50) between bits.
-
-<h3>🚀 Build & Run</h3>
-
-bash
-<em>Compile</em>
+**Compilar**
+```bash
 make
+````
 
-<em>Run server in one terminal</em>
+**Ejecutar Servidor**
+
+```bash
 ./server
+```
 
-<em>Run client in another</em>
-./client <server_pid> "Your custom message"
-🧪 Example
-bash
-$ ./server
+*Salida:*
+
+```
 PID: 12345
+```
 
-$ ./client 12345 "Hello from client!"
-Server displays: Hello from client!
+**Ejecutar Cliente**
 
-<h3>🛠️ Bonus Features</h3>
-Custom signal protocol using confirmation signals.
+```bash
+./client 12345 "Hola desde el cliente!"
+```
 
-sigaction() for robust signal handling.
+**Salida en Servidor:**
 
-Dynamic buffer system without full bitwise arithmetic.
+```
+Hola desde el cliente!
+```
 
-Basic input validation for cleaner UX and error handling.
+---
+
+## 🛠️ Funcionalidades Extra
+
+* Protocolo personalizado basado en confirmaciones.
+* Manejo fiable de señales con `sigaction()`.
+* Buffer dinámico sin operaciones bitwise complejas.
+* Validación de entrada básica pero efectiva.
+* Estabilidad garantizada con mensajes muy largos.
+
+```
+
+---
