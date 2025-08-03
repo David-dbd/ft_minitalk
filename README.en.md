@@ -2,6 +2,7 @@
   <a href="README.md">🇪🇸 Español</a> • <a href="README.en.md">🇺🇸 English</a>
 </p>
 
+---
 # ft_minitalk 🧠💬
 
 **ft_minitalk** is a UNIX signal-based communication system between two independent processes — a client and a server — built as part of the 42 curriculum.  
@@ -117,3 +118,42 @@ By enforcing strict **bit-by-bit acknowledgments** and using a custom buffering 
 **Compile**
 ```bash
 make
+````
+
+**Run Server**
+
+```bash
+./server
+```
+
+*Output:*
+
+```
+PID: 12345
+```
+
+**Run Client**
+
+```bash
+./client 12345 "Hello from client!"
+```
+
+**Server Output:**
+
+```
+Hello from client!
+```
+
+---
+
+## 🛠️ Bonus Features
+
+* Custom confirmation-based protocol.
+* Reliable signal handling with `sigaction()`.
+* Dynamic buffer without complex bitwise ops.
+* Basic but effective input validation.
+* Stable with extremely large messages.
+
+```
+```
+
