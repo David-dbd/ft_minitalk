@@ -154,6 +154,4 @@ Hello from client!
 * Basic but effective input validation.
 * Stable with extremely large messages.
 
-```
-```
 
