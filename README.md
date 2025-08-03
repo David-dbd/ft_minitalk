@@ -153,7 +153,3 @@ Hola desde el cliente!
 * Buffer dinámico sin operaciones bitwise complejas.
 * Validación de entrada básica pero efectiva.
 * Estabilidad garantizada con mensajes muy largos.
-
-```
-
----
